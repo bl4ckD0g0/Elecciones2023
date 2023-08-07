@@ -2,7 +2,12 @@
 import fitz
 import os, os.path as path
 import sys
+import requests
 
+def get_folder():
+    url = 'https://resultados.generales23j.es/assets/files/congreso_municipios.zip'
+    r = requests.get(url, allow_redirects= True)
+    open('congreso_municipios.zip', 'wb').write(r.content)
 
 def process_folder(path_folder):
     files = os.listdir(path_folder)
@@ -48,5 +53,5 @@ def process_page_words(lines, out):
 
 if __name__ == '__main__':
     path_folder = sys.argv[1]
+    get_folder()
     process_folder(path_folder)
-    #https://resultados.generales23j.es/assets/files/congreso_municipios.zip
