@@ -11,6 +11,12 @@ def get_folder():
     r = requests.get(url, allow_redirects= True)
     open('congreso_municipios.zip', 'wb').write(r.content)
 
+    # Path of the file
+    filename = "C:\\Users\max\PycharmProjects\\votosMunicipioScript\congreso_municipios.zip"
+
+    # Target directory
+    extract_dir = "C:\\Users\max\PycharmProjects\\votosMunicipioScript\\"
+
     # Unzip the file
     shutil.unpack_archive(filename, extract_dir)
 
@@ -25,6 +31,7 @@ def process_folder(path_folder):
 
     for file in files:
         process_doc(file, output_folder)
+
 
 def process_doc(doc_name, output_path):
     doc = fitz.open(doc_name)
