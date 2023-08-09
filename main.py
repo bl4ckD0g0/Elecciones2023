@@ -11,15 +11,12 @@ def get_folder():
     r = requests.get(url, allow_redirects= True)
     open('congreso_municipios.zip', 'wb').write(r.content)
 
-    # Path of the file
     filename = "C:\\Users\max\PycharmProjects\\votosMunicipioScript\congreso_municipios.zip"
-
-    # Target directory
     extract_dir = "C:\\Users\max\PycharmProjects\\votosMunicipioScript\\"
-
-    # Unzip the file
     shutil.unpack_archive(filename, extract_dir)
 
+    #Delete old vainas
+    #shutil.rmtree()
 
 def process_folder(path_folder):
     files = os.listdir(path_folder)
