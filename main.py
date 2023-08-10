@@ -1,41 +1,48 @@
 
 import fitz
 import os, os.path as path
-import sys
 import requests
 import shutil
+from pathlib import Path
 
+MUNICIPIOS_ZIP = 'congreso_municipios.zip'
+CARPETA_MUNICIPIOS = "congreso_municipios"
+URL_MUNICIPIOS = 'https://resultados.generales23j.es/assets/files/congreso_municipios.zip'
+TO_BE_DELETED_FILES = [MUNICIPIOS_ZIP, '__MACOSX']
+OUTPUT_FOLDER = str(Path().absolute().joinpath("resultados"))
 
 def get_folder():
-    url = 'https://resultados.generales23j.es/assets/files/congreso_municipios.zip'
-    r = requests.get(url, allow_redirects= True)
-    open('congreso_municipios.zip', 'wb').write(r.content)
+    r = requests.get(URL_MUNICIPIOS)
+    open(MUNICIPIOS_ZIP, 'wb').write(r.content)
 
-    filename = "C:\\Users\max\PycharmProjects\\votosMunicipioScript\congreso_municipios.zip"
-    extract_dir = "C:\\Users\max\PycharmProjects\\votosMunicipioScript\\"
-    shutil.unpack_archive(filename, extract_dir)
+    shutil.unpack_archive(MUNICIPIOS_ZIP)
 
-    #Delete old vainas
-    #shutil.rmtree()
+    os.remove(TO_BE_DELETED_FILES[0])
+    shutil.rmtree(TO_BE_DELETED_FILES[1])
 
-def process_folder(path_folder):
-    files = os.listdir(path_folder)
-    os.chdir(path_folder)
+def process_folder():
+    files = os.listdir(CARPETA_MUNICIPIOS)
 
-    output_folder = "..\\results"
-    if not path.exists(output_folder):
-        os.mkdir(output_folder)
+    if not path.exists(OUTPUT_FOLDER):
+        os.mkdir(OUTPUT_FOLDER)
+
+    os.chdir(CARPETA_MUNICIPIOS)
 
     for file in files:
-        process_doc(file, output_folder)
+        print(file)
+        if file.endswith('.pdf'):
+            process_doc(file)
+        else:
+            os.remove(file)
 
 
-def process_doc(doc_name, output_path):
+def process_doc(doc_name):
     doc = fitz.open(doc_name)
 
     page0 = doc[0]
     lines = page0.get_text().split('\n')
-    out = open(output_path +'\\' + lines[2] + '.csv', "wb")
+    nombre_municipio = lines[2] + '.csv'
+    out = open(Path(OUTPUT_FOLDER).joinpath(nombre_municipio), "wb")
     out.write('Municipio; Número de votos; Porcentaje\n'.encode('utf8'))
 
     lines = lines[2:]
@@ -62,6 +69,5 @@ def process_page_words(lines, out):
 
 
 if __name__ == '__main__':
-    path_folder = sys.argv[1]
     get_folder()
-    process_folder(path_folder)
+    process_folder()
