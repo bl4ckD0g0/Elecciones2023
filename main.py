@@ -20,6 +20,12 @@ def get_folder():
     os.remove(TO_BE_DELETED_FILES[0])
     shutil.rmtree(TO_BE_DELETED_FILES[1])
 
+
+def seleccionar_partido():
+
+    return partido
+
+
 def process_folder():
     files = os.listdir(CARPETA_MUNICIPIOS)
 
@@ -27,16 +33,17 @@ def process_folder():
         os.mkdir(OUTPUT_FOLDER)
 
     os.chdir(CARPETA_MUNICIPIOS)
+    partido = seleccionar_partido()
 
     for file in files:
         print(file)
         if file.endswith('.pdf'):
-            process_doc(file)
+            process_doc(file, partido)
         else:
             os.remove(file)
 
 
-def process_doc(doc_name):
+def process_doc(doc_name, partido):
     doc = fitz.open(doc_name)
 
     page0 = doc[0]
@@ -46,22 +53,22 @@ def process_doc(doc_name):
     out.write('Municipio; Número de votos; Porcentaje\n'.encode('utf8'))
 
     lines = lines[2:]
-    process_page_words(lines, out)
+    process_page_words(lines, out, partido)
 
     doc.delete_page(0)
 
     for page_number, page in enumerate(doc):
         text = page.get_text()
         lines = text.split('\n')
-        process_page_words(lines, out)
+        process_page_words(lines, out, partido)
     out.close()
 
 
-def process_page_words(lines, out):
+def process_page_words(lines, out, partido):
     municipio = lines[1]
     numero_votos = porcentaje = 0
     for j, line in enumerate(lines):
-        if line == 'FO':
+        if line == partido:
             numero_votos = lines[j + 1]
             porcentaje = lines[j + 2]
             break
