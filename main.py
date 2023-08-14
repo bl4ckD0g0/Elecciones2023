@@ -11,7 +11,13 @@ CARPETA_MUNICIPIOS = 'congreso_municipios'
 URL_MUNICIPIOS = 'https://resultados.generales23j.es/assets/files/congreso_municipios.zip'
 TO_BE_DELETED_FILES = [MUNICIPIOS_ZIP, '__MACOSX']
 OUTPUT_FOLDER = str(Path().absolute().joinpath('resultados'))
-WEB_CANDIDATURAS = 'https://resultados.generales23j.es/es/resultados/0/0/20'
+CANDIDATURAS = ['PP','PSOE','VOX','VOX','SUMAR','ERC','JxCAT-JUNTS','EH Bildu','EAJ-PNV',
+                'B.N.G','CCa','U.P.N.','PACMA','CUP-PR','FO','NC-bc','PDeCAT-E-CiU',
+                'RECORTES CERO','U.P.L','PUM+J','EXISTE','PCTE','GBAI','SY','ADELANTE ANDALUCÍA',
+                'ESCAÑOS EN BLANCO','JM+','XAV','BQEX','CJ','FE de las JONS','PAR','ESPAÑA VACIADA',
+                'PH','ASTURIAS EXISTE EV','XH','VP','Zsi','VB','POR MI REGIÓN','AHORA CANARIAS-PCPC',
+                'PARTIDO AUTÓNOMOS','EVB','CpM','EV-PCAS-TC','JxG','Somos Cc','PREPAL','ALM','F.I.A',
+                '3e','Ud.Ca','GITV','+RDS+','EVC','PUEDE','LB','UNIDOS SI','FUERZA CÍVICA','CCD']
 
 def get_folder():
     r = requests.get(URL_MUNICIPIOS)
@@ -22,33 +28,28 @@ def get_folder():
     os.remove(TO_BE_DELETED_FILES[0])
     shutil.rmtree(TO_BE_DELETED_FILES[1])
 
-def get_candidaturas():
-    #candidaturas = {}
-    resultados = requests.get(WEB_CANDIDATURAS)
-    content = resultados.text
-    #patron = "print:pl-0! flex break-inside-avoid items-center col-span-4 !pl-4 col-span-4"
-
-
-    #return candidaturas
-    return content
-
 
 def seleccionar_partido():
-    partidos = get_candidaturas()
+    partidos = CANDIDATURAS
     print(partidos)
-    partido = input(MSJ_INPUT_PARTIDOS)
-    if partido not in partidos:
-        print("No se ha seleccionado un partido válido")
+    esValido = False
+    while not esValido:
+        partido = input(MSJ_INPUT_PARTIDOS)
+        if partido not in partidos:
+            print("No se ha seleccionado un partido válido")
+        else:
+            esValido = True
     return partido
 
 def process_folder():
     files = os.listdir(CARPETA_MUNICIPIOS)
 
-    if not path.exists(OUTPUT_FOLDER):
-        os.mkdir(OUTPUT_FOLDER)
-
     os.chdir(CARPETA_MUNICIPIOS)
     partido = seleccionar_partido()
+    OUTPUT_FOLDER = OUTPUT_FOLDER + '_' + partido
+
+    if not path.exists(OUTPUT_FOLDER):
+        os.mkdir(OUTPUT_FOLDER)
 
     for file in files:
         print(file)
@@ -93,4 +94,3 @@ def process_page_words(lines, out, partido):
 if __name__ == '__main__':
     get_folder()
     process_folder()
-    #print(get_candidaturas())
