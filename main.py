@@ -5,11 +5,13 @@ import requests
 import shutil
 from pathlib import Path
 
+MSJ_INPUT_PARTIDOS = 'Indique el partido del que desea optener la clasificación de votos por municipios'
 MUNICIPIOS_ZIP = 'congreso_municipios.zip'
-CARPETA_MUNICIPIOS = "congreso_municipios"
+CARPETA_MUNICIPIOS = 'congreso_municipios'
 URL_MUNICIPIOS = 'https://resultados.generales23j.es/assets/files/congreso_municipios.zip'
 TO_BE_DELETED_FILES = [MUNICIPIOS_ZIP, '__MACOSX']
-OUTPUT_FOLDER = str(Path().absolute().joinpath("resultados"))
+OUTPUT_FOLDER = str(Path().absolute().joinpath('resultados'))
+WEB_CANDIDATURAS = 'https://resultados.generales23j.es/es/resultados/0/0/20'
 
 def get_folder():
     r = requests.get(URL_MUNICIPIOS)
@@ -20,11 +22,24 @@ def get_folder():
     os.remove(TO_BE_DELETED_FILES[0])
     shutil.rmtree(TO_BE_DELETED_FILES[1])
 
+def get_candidaturas():
+    #candidaturas = {}
+    resultados = requests.get(WEB_CANDIDATURAS)
+    content = resultados.text
+    #patron = "print:pl-0! flex break-inside-avoid items-center col-span-4 !pl-4 col-span-4"
+
+
+    #return candidaturas
+    return content
+
 
 def seleccionar_partido():
-
+    partidos = get_candidaturas()
+    print(partidos)
+    partido = input(MSJ_INPUT_PARTIDOS)
+    if partido not in partidos:
+        print("No se ha seleccionado un partido válido")
     return partido
-
 
 def process_folder():
     files = os.listdir(CARPETA_MUNICIPIOS)
@@ -78,3 +93,4 @@ def process_page_words(lines, out, partido):
 if __name__ == '__main__':
     get_folder()
     process_folder()
+    #print(get_candidaturas())
