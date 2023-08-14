@@ -46,6 +46,7 @@ def process_folder():
 
     os.chdir(CARPETA_MUNICIPIOS)
     partido = seleccionar_partido()
+    global OUTPUT_FOLDER
     OUTPUT_FOLDER = OUTPUT_FOLDER + '_' + partido
 
     if not path.exists(OUTPUT_FOLDER):
