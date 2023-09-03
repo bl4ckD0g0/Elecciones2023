@@ -1,9 +1,10 @@
 
-import fitz
-import os, os.path as path
-import requests
+import os
+import os.path as path
 import shutil
 from pathlib import Path
+import fitz
+import requests
 
 MSJ_INPUT_PARTIDOS = 'Indique el partido del que desea optener la clasificación de votos por municipios'
 MUNICIPIOS_ZIP = 'congreso_municipios.zip'
@@ -19,6 +20,7 @@ CANDIDATURAS = ['PP','PSOE','VOX','VOX','SUMAR','ERC','JxCAT-JUNTS','EH Bildu','
                 'PARTIDO AUTÓNOMOS','EVB','CpM','EV-PCAS-TC','JxG','Somos Cc','PREPAL','ALM','F.I.A',
                 '3e','Ud.Ca','GITV','+RDS+','EVC','PUEDE','LB','UNIDOS SI','FUERZA CÍVICA','CCD']
 
+
 def get_folder():
     r = requests.get(URL_MUNICIPIOS)
     open(MUNICIPIOS_ZIP, 'wb').write(r.content)
@@ -32,14 +34,15 @@ def get_folder():
 def seleccionar_partido():
     partidos = CANDIDATURAS
     print(partidos)
-    esValido = False
-    while not esValido:
+    es_valido = False
+    while not es_valido:
         partido = input(MSJ_INPUT_PARTIDOS)
         if partido not in partidos:
             print("No se ha seleccionado un partido válido")
         else:
-            esValido = True
+            es_valido = True
     return partido
+
 
 def process_folder():
     files = os.listdir(CARPETA_MUNICIPIOS)
