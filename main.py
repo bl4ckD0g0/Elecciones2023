@@ -5,9 +5,8 @@ from pathlib import Path
 
 import fitz
 
-MSJ_INPUT_PARTIDOS = 'Indique el partido del que desea optener la clasificación de votos por municipios'
 CARPETA_MUNICIPIOS = 'congreso_municipios'
-OUTPUT_FOLDER = str(Path().absolute().joinpath('resultados'))
+CARPETA_RESULTADOS = str(Path().absolute().joinpath('resultados'))
 
 
 def process_folder():
@@ -15,8 +14,8 @@ def process_folder():
 
     os.chdir(CARPETA_MUNICIPIOS)
 
-    if not path.exists(OUTPUT_FOLDER):
-        os.mkdir(OUTPUT_FOLDER)
+    if not path.exists(CARPETA_RESULTADOS):
+        os.mkdir(CARPETA_RESULTADOS)
 
     for file in files:
         print(file)
@@ -27,7 +26,7 @@ def process_folder():
 def procesar_provincia(doc_name):
     doc = fitz.open(doc_name)
     current_folder = os.getcwd()
-    os.chdir(OUTPUT_FOLDER)
+    os.chdir(CARPETA_RESULTADOS)
 
     page0 = doc[0]
     lines = page0.get_text().split('\n')
