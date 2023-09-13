@@ -60,24 +60,20 @@ def procesar_municipio(lines):
 
     j = lines.index('Candidaturas') + 6
     while j < len(lines):
-        partido = ''
-
+        partido = lines[j]
+        j += 1
         while re.search('[a-zA-Z]', lines[j]):
             partido += ' ' + lines[j]
             j += 1
-        partido = partido.lstrip()
 
-        if partido in CANDIDATURAS and partido != ultimo_partido_leido:
+        if partido != ultimo_partido_leido:
             votos = lines[j]
             porcentaje = lines[j + 1]
 
             out.write('{} ;{} ;{} \n'.format(partido, votos, porcentaje).encode('utf8'))
             ultimo_partido_leido = partido
-            if re.search('[a-zA-Z]', lines[j+2]):
-                j += 2
-            else:
-                j += 3
-        else:
+
+        while j < len(lines) and not re.search('[a-zA-Z]', lines[j]):
             j += 1
 
     out.close()
