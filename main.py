@@ -2,7 +2,6 @@ import os
 import os.path as path
 import re
 from pathlib import Path
-from DatosCandidaturas import CANDIDATURAS
 
 import fitz
 
@@ -36,11 +35,9 @@ def procesar_provincia(doc_name):
     os.mkdir(nombre_provincia)
     os.chdir(nombre_provincia)
 
-    # PROCESAMOS LA PRIMERA POR SEPARADO
     lines = lines[2:]
     procesar_municipio(lines)
 
-    # Después de generar el 1er Municipio, eliminas la 1a pagina y procesas el resto
     doc.delete_page(0)
 
     for page_number, page in enumerate(doc):
@@ -72,6 +69,8 @@ def procesar_municipio(lines):
 
             out.write('{} ;{} ;{} \n'.format(partido, votos, porcentaje).encode('utf8'))
             ultimo_partido_leido = partido
+            if j < len(lines) and not re.search('[a-zA-Z]', lines[j+2]):
+                j += 6
 
         while j < len(lines) and not re.search('[a-zA-Z]', lines[j]):
             j += 1
