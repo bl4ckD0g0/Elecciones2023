@@ -1,5 +1,6 @@
 import os
 import os.path as path
+import re
 from pathlib import Path
 from DatosCandidaturas import CANDIDATURAS
 
@@ -52,17 +53,32 @@ def procesar_provincia(doc_name):
 
 def procesar_municipio(lines):
     municipio = lines[1].replace("/", "_")
-    out = open(municipio, "wb")
+    out = open(municipio + '.csv', "wb")
     out.write('Partido; Número de votos; Porcentaje\n'.encode('utf8'))
     ultimo_partido_leido = ''
     votos = porcentaje = 0
-    for j, line in enumerate(lines):
-        partido = lines[j]
+
+    j = lines.index('Candidaturas') + 6
+    while j < len(lines):
+        partido = ''
+
+        while re.search('[a-zA-Z]', lines[j]):
+            partido += ' ' + lines[j]
+            j += 1
+        partido = partido.lstrip()
+
         if partido in CANDIDATURAS and partido != ultimo_partido_leido:
-            votos = lines[j + 1]
-            porcentaje = lines[j + 2]
+            votos = lines[j]
+            porcentaje = lines[j + 1]
+
             out.write('{} ;{} ;{} \n'.format(partido, votos, porcentaje).encode('utf8'))
             ultimo_partido_leido = partido
+            if re.search('[a-zA-Z]', lines[j+2]):
+                j += 2
+            else:
+                j += 3
+        else:
+            j += 1
 
     out.close()
 
